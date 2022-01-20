@@ -20,6 +20,7 @@ textRect = text.get_rect()
 
 kPosX = 200
 kPosY = 300
+sliderPosX = 300
 
 kSpeed = 0.10
 
