@@ -1,10 +1,13 @@
 from ast import parse
+import math
 import pygame
 from pygame.locals import (
     K_LEFT,
     K_RIGHT,
     KEYDOWN,
-    KEYUP
+    KEYUP,
+    K_a,
+    K_d
 )
 
 pygame.init()
@@ -12,17 +15,22 @@ pygame.init()
 X = 600
 Y = 500
 
+fps = 60
+clock = pygame.time.Clock()
+
 screen = pygame.display.set_mode([600, 500])
 
-#font = pygame.font.Font('freesansbold.ttf', 20)
-#text = font.render(pointS, True, (0,255,0), (0,0,128))
-textRect = text.get_rect()
+pygame.display.set_caption('test')
+
+point = 0
+font = pygame.font.Font('freesansbold.ttf', 20)
+
 
 kPosX = 200
 kPosY = 300
-sliderPosX = 300
 
-kSpeed = 0.10
+
+kSpeed = 2
 
 sPosX = 250
 sPosY = 400
@@ -30,13 +38,16 @@ sPosY = 400
 sRetHoejre = False
 sRetVenstre = False
 
-sSpeed = 0.20
+srv = False
+srh = False
+spx = 250
+spy = 350
+ss = 2.5
+
+sSpeed = 2.5
 
 retHoejre = True
 retNed = True
-
-point = 0
-
 
 
 running = True
@@ -45,11 +56,19 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == KEYDOWN:
+            if event.key == K_a:
+                srv = True
+            if event.key == K_d:
+                srh = True
             if event.key == K_LEFT:
                 sRetVenstre = True
             if event.key == K_RIGHT:
                 sRetHoejre = True
         if event.type == KEYUP:
+            if event.key == K_a:
+                srv = False
+            if event.key == K_d:
+                srh = False
             if event.key == K_LEFT:
                 sRetVenstre = False
             if event.key == K_RIGHT:
@@ -57,21 +76,17 @@ while running:
 
 
 
-    #pointS = str((point))
-
-    
-    #textRect.center = (X // 2, Y // 2 )
-
-    #screen.blit(text, textRect)
-
-    
+  
                                 
                 
     if sRetHoejre == True:
         sPosX = sPosX + sSpeed
     if sRetVenstre == True:
         sPosX = sPosX - sSpeed
-    
+    if srh == True:
+        spx = spx + ss
+    if srv == True:
+        spx = spx - ss
 
     screen.fill((255, 255, 255))
 
@@ -87,12 +102,23 @@ while running:
     chikane4 = pygame.draw.rect(screen, (0,200,200), (449,247,2,8))
 
     slider = pygame.draw.rect(screen, (50,50,50), (sPosX,sPosY,100,5))
+    slider2 = pygame.draw.rect(screen, (50,50,50), (spx, spy, 100, 5))
 
-   
+
+    rPoint = math.floor(point / 3)
+    pointS = str(rPoint)
+    text = font.render(pointS, True, (0,255,0))
+    screen.blit(text, (250, 20))
+
+
     if slider.colliderect(roed):
         sRetVenstre = False
     if slider.colliderect(blaa):
         sRetHoejre = False
+    if slider2.colliderect(roed):
+        srv = False
+    if slider2.colliderect(blaa):
+        srh = False
 
     if(retHoejre):
         kPosX = kPosX + kSpeed
@@ -114,7 +140,7 @@ while running:
         retHoejre = False
 
     if(kasse.colliderect(sort)):
-        pygame.quit()
+        running = False
 
 
     if(kasse.colliderect(chikane1)):
@@ -130,9 +156,15 @@ while running:
     
 
     if(kasse.colliderect(slider)):
-        retNed = False
         point = point + 1
+        retNed = False
+    if(kasse.colliderect(slider2)):
+        point = point + 1
+        retNed = False
+        
+        
    
     pygame.display.flip()
+    clock.tick(fps)
 
 pygame.quit()
